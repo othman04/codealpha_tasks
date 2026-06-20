@@ -3,18 +3,12 @@
 A video conferencing and collaboration tool built with **Django**, **Django Channels**, and **WebSockets**. This project follows a phased roadmap — **Version 1 (MVP)** is fully implemented.
 
 ## Features
-
-### Version 1 — MVP (Current)
 - User registration and login
 - Real-time chat via WebSockets
 - Room creation and listing
 - Online user presence
-
-### Version 2 — Planned
 - File sharing
-- Audio calls (WebRTC)
-
-### Version 3 — Planned
+- Audio calls (WebRTC
 - Video calls
 - Screen sharing
 - Collaborative whiteboard
