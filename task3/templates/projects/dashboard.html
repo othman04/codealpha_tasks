@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}Tableau de bord{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Mes projets</h1>
+    <a href="{% url 'projects:project_create' %}" class="btn btn-primary">+ Nouveau projet</a>
+</div>
+
+{% if projects %}
+<div class="card-grid">
+    {% for project in projects %}
+    <div class="project-card">
+        <h3><a href="{% url 'projects:project_detail' project.pk %}">{{ project.name }}</a></h3>
+        <p>{{ project.description|truncatewords:20|default:"Aucune description" }}</p>
+        <div class="meta">
+            Propriétaire : {{ project.owner.username }} ·
+            {{ project.tasks.count }} tâche{{ project.tasks.count|pluralize }}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty-state card">
+    <h3>Aucun projet</h3>
+    <p>Créez votre premier projet pour commencer à organiser vos tâches.</p>
+    <a href="{% url 'projects:project_create' %}" class="btn btn-primary" style="margin-top:1rem;">Créer un projet</a>
+</div>
+{% endif %}
+{% endblock %}

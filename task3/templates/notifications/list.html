@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}Notifications{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Notifications</h1>
+    {% if unread_count %}
+    <a href="{% url 'notifications:mark_all_read' %}" class="btn btn-secondary">Tout marquer comme lu</a>
+    {% endif %}
+</div>
+
+<div class="card" style="padding:0;overflow:hidden;">
+    {% for notification in notifications %}
+    <div class="notification-item {% if not notification.is_read %}unread{% endif %}">
+        <div class="notification-message">{{ notification.message }}</div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:.5rem;">
+            <span class="notification-date">{{ notification.created_at|date:"d/m/Y H:i" }}</span>
+            {% if not notification.is_read %}
+            <a href="{% url 'notifications:mark_read' notification.pk %}" class="btn btn-sm btn-secondary">Marquer lu</a>
+            {% endif %}
+        </div>
+    </div>
+    {% empty %}
+    <div class="empty-state">
+        <h3>Aucune notification</h3>
+        <p>Vous serez notifié lors d'assignations, commentaires et changements de statut.</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

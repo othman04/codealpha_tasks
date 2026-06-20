@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ project.name }}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1>{{ project.name }}</h1>
+        <p style="color:var(--text-muted);margin-top:.25rem;">{{ project.description|default:"" }}</p>
+    </div>
+    <div style="display:flex;gap:.75rem;">
+        <a href="{% url 'tasks:task_create' %}?project={{ project.pk }}" class="btn btn-primary">+ Nouvelle tâche</a>
+        {% if is_owner %}
+        <a href="{% url 'projects:project_edit' project.pk %}" class="btn btn-secondary">Modifier</a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="project-layout">
+    <div>
+        <div class="kanban-board">
+            <!-- Colonne À faire -->
+            <div class="kanban-column todo">
+                <div class="kanban-column-header">
+                    <h3>À faire</h3>
+                    <span class="task-count">{{ tasks_todo.count }}</span>
+                </div>
+                {% for task in tasks_todo %}
+                {% include 'projects/_task_card.html' %}
+                {% empty %}
+                <p style="color:var(--text-muted);font-size:.85rem;text-align:center;padding:1rem;">Aucune tâche</p>
+                {% endfor %}
+            </div>
+
+            <!-- Colonne En cours -->
+            <div class="kanban-column in-progress">
+                <div class="kanban-column-header">
+                    <h3>En cours</h3>
+                    <span class="task-count">{{ tasks_in_progress.count }}</span>
+                </div>
+                {% for task in tasks_in_progress %}
+                {% include 'projects/_task_card.html' %}
+                {% empty %}
+                <p style="color:var(--text-muted);font-size:.85rem;text-align:center;padding:1rem;">Aucune tâche</p>
+                {% endfor %}
+            </div>
+
+            <!-- Colonne Terminée -->
+            <div class="kanban-column done">
+                <div class="kanban-column-header">
+                    <h3>Terminée</h3>
+                    <span class="task-count">{{ tasks_done.count }}</span>
+                </div>
+                {% for task in tasks_done %}
+                {% include 'projects/_task_card.html' %}
+                {% empty %}
+                <p style="color:var(--text-muted);font-size:.85rem;text-align:center;padding:1rem;">Aucune tâche</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <div class="card members-panel">
+            <h3>Membres</h3>
+            {% for member in members %}
+            <div class="member-item">
+                <div class="member-avatar">{{ member.user.username|first|upper }}</div>
+                <div>
+                    <div>{{ member.user.username }}</div>
+                    <div class="member-role">{{ member.get_role_display }}</div>
+                </div>
+            </div>
+            {% endfor %}
+
+            {% if is_owner %}
+            <hr style="margin:1rem 0;border:none;border-top:1px solid var(--border);">
+            <h3 style="margin-bottom:.75rem;">Inviter un membre</h3>
+            <form method="post" action="{% url 'projects:invite_member' project.pk %}">
+                {% csrf_token %}
+                {{ invite_form.username }}
+                <div style="margin-top:.5rem;">{{ invite_form.role }}</div>
+                <button type="submit" class="btn btn-primary btn-sm" style="margin-top:.75rem;width:100%;">Inviter</button>
+            </form>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

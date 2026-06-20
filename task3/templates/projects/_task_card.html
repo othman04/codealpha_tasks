@@ -1,0 +1,21 @@
+<div class="task-card">
+    <h4><a href="{% url 'tasks:task_detail' task.pk %}">{{ task.title }}</a></h4>
+    <div class="task-meta">
+        {% if task.assigned_to %}
+        <span>👤 {{ task.assigned_to.username }}</span>
+        {% endif %}
+        {% if task.due_date %}
+        <span>📅 {{ task.due_date|date:"d/m/Y" }}</span>
+        {% endif %}
+    </div>
+    <div class="task-actions">
+        <form method="post" action="{% url 'tasks:task_status_update' task.pk %}" class="status-form">
+            {% csrf_token %}
+            <select name="status" onchange="this.form.submit()">
+                <option value="todo" {% if task.status == 'todo' %}selected{% endif %}>À faire</option>
+                <option value="in_progress" {% if task.status == 'in_progress' %}selected{% endif %}>En cours</option>
+                <option value="done" {% if task.status == 'done' %}selected{% endif %}>Terminée</option>
+            </select>
+        </form>
+    </div>
+</div>

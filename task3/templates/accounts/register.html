@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}Inscription{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="card">
+        <h1>Inscription</h1>
+        <p class="subtitle">Créez votre compte pour commencer</p>
+        <form method="post">
+            {% csrf_token %}
+            {% for field in form %}
+            <div class="form-group">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% for error in field.errors %}
+                <div class="form-error">{{ error }}</div>
+                {% endfor %}
+            </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-primary" style="width:100%;margin-top:.5rem;">S'inscrire</button>
+        </form>
+        <p style="text-align:center;margin-top:1.5rem;font-size:.9rem;">
+            Déjà un compte ? <a href="{% url 'accounts:login' %}">Se connecter</a>
+        </p>
+    </div>
+</div>
+{% endblock %}
