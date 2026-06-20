@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ call_type|title }} Call — {{ room.name }}{% endblock %}
+{% block main_class %}container call-container{% endblock %}
+
+{% block content %}
+<div class="call-page">
+  <div class="call-topbar">
+    <div>
+      <a href="{% url 'chat:room' room.id %}" class="back-link">← Back to {{ room.name }}</a>
+      <h1>
+        {% if call_type == "video" %}📹 Video Call{% else %}🎙️ Audio Call{% endif %}
+      </h1>
+      <span class="room-meta">Room: {{ room.name }}</span>
+    </div>
+    <span class="connection-status" id="call-status">Connecting...</span>
+  </div>
+
+  <div class="video-grid" id="video-grid">
+    <div class="video-tile local-tile" id="local-tile">
+      <video id="local-video" autoplay playsinline muted></video>
+      <span class="video-label">{{ user.username }} (you)</span>
+    </div>
+  </div>
+
+  <div class="call-controls">
+    <button id="btn-mute" class="ctrl-btn" title="Mute microphone">🎙️</button>
+    {% if call_type == "video" %}
+    <button id="btn-video" class="ctrl-btn" title="Toggle camera">📹</button>
+    <button id="btn-screen" class="ctrl-btn" title="Share screen">🖥️</button>
+    {% endif %}
+    <button id="btn-hangup" class="ctrl-btn ctrl-hangup" title="Leave call">📞</button>
+  </div>
+
+  <div class="participants-panel panel">
+    <div class="panel-header">
+      <h2>Participants</h2>
+      <span class="badge" id="participant-count">1</span>
+    </div>
+    <ul class="user-list" id="participants-list">
+      <li class="user-item online">
+        <span class="status-dot online"></span>
+        <span class="user-name">{{ user.username }} (you)</span>
+      </li>
+    </ul>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  const ROOM_ID = {{ room.id }};
+  const CURRENT_USER = "{{ user.username }}";
+  const CALL_TYPE = "{{ call_type }}";
+</script>
+<script src="{% static 'js/webrtc.js' %}"></script>
+{% endblock %}

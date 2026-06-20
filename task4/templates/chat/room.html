@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ room.name }} — ConnectHub{% endblock %}
+{% block main_class %}container room-container{% endblock %}
+
+{% block content %}
+<div class="room-layout">
+  <section class="chat-panel">
+    <div class="chat-header">
+      <div>
+        <a href="{% url 'chat:rooms' %}" class="back-link">← Back to Rooms</a>
+        <h1>{{ room.name }}</h1>
+        <span class="room-meta">Created by {{ room.created_by.username }}</span>
+      </div>
+      <div class="chat-actions">
+        <a href="{% url 'calls:call' room.id %}?type=audio" class="btn btn-sm btn-call">🎙️ Audio</a>
+        <a href="{% url 'calls:call' room.id %}?type=video" class="btn btn-sm btn-call">📹 Video</a>
+        <a href="{% url 'whiteboard:board' room.id %}" class="btn btn-sm btn-call">🎨 Whiteboard</a>
+        <span class="connection-status" id="connection-status">Connecting...</span>
+      </div>
+    </div>
+
+    <div class="chat-messages" id="chat-messages">
+      {% for msg in messages %}
+      <div class="message {% if msg.sender.username == user.username %}message-own{% else %}message-other{% endif %}">
+        <div class="message-header">
+          <span class="message-author">{{ msg.sender.username }}</span>
+          <span class="message-time">{{ msg.created_at|date:"H:i" }}</span>
+        </div>
+        <div class="message-body">{{ msg.content }}</div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <form id="chat-form" class="chat-input-form">
+      <label class="file-upload-btn" title="Share a file">
+        📎
+        <input type="file" id="file-input" hidden>
+      </label>
+      <input
+        type="text"
+        id="chat-input"
+        placeholder="Type a message..."
+        autocomplete="off"
+        maxlength="2000"
+      >
+      <button type="submit" class="btn btn-primary">Send</button>
+    </form>
+  </section>
+
+  <aside class="panel room-sidebar">
+    <div class="panel-header">
+      <h2>Online Users</h2>
+    </div>
+    <ul class="user-list" id="user-list">
+      <li class="user-item online" data-username="{{ user.username }}">
+        <span class="status-dot online"></span>
+        <span class="user-name">{{ user.username }} (you)</span>
+      </li>
+      {% for u in users %}
+      <li class="user-item" data-username="{{ u.username }}">
+        <span class="status-dot offline"></span>
+        <span class="user-name">{{ u.username }}</span>
+      </li>
+      {% endfor %}
+    </ul>
+
+    <div class="panel-header mt-lg">
+      <h2>📎 Shared Files</h2>
+    </div>
+    <ul class="file-list" id="file-list">
+      {% for f in files %}
+      <li class="file-item">
+        <a href="{{ f.file.url }}" target="_blank" download>{{ f.filename }}</a>
+        <span class="file-meta">{{ f.sender.username }} · {{ f.created_at|date:"M d, H:i" }}</span>
+      </li>
+      {% empty %}
+      <li class="empty-state-sm" id="no-files-msg">No files shared yet.</li>
+      {% endfor %}
+    </ul>
+
+    <div class="features-panel mt-lg">
+      <h3>Features</h3>
+      <ul class="feature-list">
+        <li class="feature-active">📎 File sharing</li>
+        <li class="feature-active">🎙️ Audio calls</li>
+        <li class="feature-active">📹 Video calls</li>
+        <li class="feature-active">🖥️ Screen sharing</li>
+        <li class="feature-active">🎨 Whiteboard</li>
+      </ul>
+    </div>
+  </aside>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  const ROOM_ID = {{ room.id }};
+  const CURRENT_USER = "{{ user.username }}";
+  const UPLOAD_URL = "{% url 'chat:upload_file' room.id %}";
+</script>
+<script src="{% static 'js/chat.js' %}"></script>
+<script src="{% static 'js/online.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}Register — ConnectHub{% endblock %}
+{% block main_class %}container auth-container{% endblock %}
+
+{% block content %}
+<div class="auth-card">
+  <div class="auth-header">
+    <h1>Create Account</h1>
+    <p class="subtitle">Join ConnectHub today</p>
+  </div>
+
+  <form method="post" class="auth-form">
+    {% csrf_token %}
+    {% if form.non_field_errors %}
+    <div class="form-errors">
+      {% for error in form.non_field_errors %}
+      <p>{{ error }}</p>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    {% for field in form %}
+    <div class="form-group">
+      <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+      {{ field }}
+      {% if field.errors %}
+      <span class="field-error">{{ field.errors.0 }}</span>
+      {% endif %}
+      {% if field.help_text %}
+      <span class="field-help">{{ field.help_text }}</span>
+      {% endif %}
+    </div>
+    {% endfor %}
+
+    <button type="submit" class="btn btn-primary btn-block">Create Account</button>
+  </form>
+
+  <p class="auth-footer">
+    Already have an account? <a href="{% url 'accounts:login' %}">Sign in</a>
+  </p>
+</div>
+{% endblock %}

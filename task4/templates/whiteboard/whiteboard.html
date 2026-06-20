@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Whiteboard — {{ room.name }}{% endblock %}
+{% block main_class %}container whiteboard-container{% endblock %}
+
+{% block content %}
+<div class="whiteboard-page">
+  <div class="whiteboard-topbar">
+    <div>
+      <a href="{% url 'chat:room' room.id %}" class="back-link">← Back to {{ room.name }}</a>
+      <h1>🎨 Whiteboard</h1>
+      <span class="room-meta">Room: {{ room.name }}</span>
+    </div>
+    <span class="connection-status" id="wb-status">Connecting...</span>
+  </div>
+
+  <div class="whiteboard-toolbar panel">
+    <div class="tool-group">
+      <label class="tool-label">Color</label>
+      <input type="color" id="wb-color" value="#6366f1">
+    </div>
+    <div class="tool-group">
+      <label class="tool-label">Size</label>
+      <input type="range" id="wb-size" min="1" max="20" value="3">
+      <span id="wb-size-val">3</span>
+    </div>
+    <div class="tool-group tool-buttons">
+      <button id="wb-pen" class="tool-btn tool-active" title="Pen">✏️</button>
+      <button id="wb-eraser" class="tool-btn" title="Eraser">🧹</button>
+      <button id="wb-clear" class="tool-btn tool-danger" title="Clear board">🗑️</button>
+    </div>
+  </div>
+
+  <div class="canvas-wrapper panel">
+    <canvas id="whiteboard-canvas"></canvas>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  const ROOM_ID = {{ room.id }};
+  const CURRENT_USER = "{{ user.username }}";
+</script>
+<script src="{% static 'js/whiteboard.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,42 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Real-Time Communication{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+  {% if user.is_authenticated %}
+  <nav class="navbar">
+    <div class="nav-brand">
+      <a href="{% url 'chat:rooms' %}">ConnectHub</a>
+    </div>
+    <div class="nav-links">
+      <span class="nav-user">Hello, <strong>{{ user.username }}</strong></span>
+      <a href="{% url 'chat:rooms' %}" class="nav-link">Rooms</a>
+      <form method="post" action="{% url 'accounts:logout' %}" class="nav-logout-form">
+        {% csrf_token %}
+        <button type="submit" class="nav-link nav-logout">Logout</button>
+      </form>
+    </div>
+  </nav>
+  {% endif %}
+
+  <main class="{% block main_class %}container{% endblock %}">
+    {% if messages %}
+    <div class="flash-messages">
+      {% for message in messages %}
+      <div class="flash flash-{{ message.tags }}">{{ message }}</div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    {% block content %}{% endblock %}
+  </main>
+
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

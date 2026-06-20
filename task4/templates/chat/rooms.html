@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Rooms — ConnectHub{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1>Chat Rooms</h1>
+  <p class="subtitle">Join a room or create a new one to start chatting</p>
+</div>
+
+<div class="rooms-layout">
+  <section class="panel rooms-panel">
+    <div class="panel-header">
+      <h2>Available Rooms</h2>
+      <span class="badge">{{ rooms|length }} room{{ rooms|length|pluralize }}</span>
+    </div>
+
+    {% if rooms %}
+    <ul class="room-list">
+      {% for room in rooms %}
+      <li class="room-item">
+        <div class="room-info">
+          <a href="{% url 'chat:room' room.id %}" class="room-name">{{ room.name }}</a>
+          <span class="room-meta">Created by {{ room.created_by.username }} · {{ room.created_at|date:"M d, Y" }}</span>
+        </div>
+        <a href="{% url 'chat:room' room.id %}" class="btn btn-sm btn-secondary">Enter</a>
+      </li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <div class="empty-state">
+      <p>No rooms yet. Create the first one!</p>
+    </div>
+    {% endif %}
+  </section>
+
+  <aside class="panel sidebar-panel">
+    <div class="panel-header">
+      <h2>Create Room</h2>
+    </div>
+    <form method="post" action="{% url 'chat:create_room' %}" class="create-room-form">
+      {% csrf_token %}
+      <div class="form-group">
+        <label for="room-name">Room Name</label>
+        <input type="text" id="room-name" name="name" placeholder="e.g. Team Standup" required maxlength="100">
+      </div>
+      <button type="submit" class="btn btn-primary btn-block">Create Room</button>
+    </form>
+
+    <div class="panel-header mt-lg">
+      <h2>Users</h2>
+      <span class="badge badge-online" id="online-count">{{ users|length }} registered</span>
+    </div>
+    <ul class="user-list" id="user-list">
+      {% for u in users %}
+      <li class="user-item" data-username="{{ u.username }}">
+        <span class="status-dot offline"></span>
+        <span class="user-name">{{ u.username }}</span>
+      </li>
+      {% empty %}
+      <li class="empty-state-sm">No other users registered yet.</li>
+      {% endfor %}
+    </ul>
+  </aside>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/online.js' %}"></script>
+{% endblock %}
