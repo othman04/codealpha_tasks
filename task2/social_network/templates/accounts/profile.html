@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ profile_user.username }} — SocialNet{% endblock %}
+
+{% block content %}
+<div class="profile-header">
+    <div class="profile-avatar">
+        {% if profile_user.profile.photo %}
+        <img src="{{ profile_user.profile.photo.url }}" alt="{{ profile_user.username }}">
+        {% else %}
+        <div class="avatar-placeholder">{{ profile_user.username|first|upper }}</div>
+        {% endif %}
+    </div>
+    <div class="profile-info">
+        <h1>{{ profile_user.username }}</h1>
+        {% if profile_user.profile.bio %}
+        <p class="bio">{{ profile_user.profile.bio }}</p>
+        {% else %}
+        <p class="bio muted">Aucune bio pour le moment.</p>
+        {% endif %}
+        <div class="profile-stats">
+            <span><strong>{{ posts.count }}</strong> publications</span>
+            <span><strong>{{ followers_count }}</strong> abonnés</span>
+            <span><strong>{{ following_count }}</strong> abonnements</span>
+        </div>
+        <div class="profile-actions">
+            {% if user == profile_user %}
+            <a href="{% url 'edit_profile' %}" class="btn btn-secondary">Modifier le profil</a>
+            {% else %}
+            <form method="post" action="{% url 'toggle_follow' username=profile_user.username %}" class="inline-form">
+                {% csrf_token %}
+                <button type="submit" class="btn {% if is_following %}btn-secondary{% else %}btn-primary{% endif %}">
+                    {% if is_following %}Ne plus suivre{% else %}Suivre{% endif %}
+                </button>
+            </form>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<h2 class="section-title">Publications de {{ profile_user.username }}</h2>
+
+{% if posts %}
+<div class="posts-grid">
+    {% for post in posts %}
+    {% include 'posts/post_card.html' with post=post liked_post_ids=liked_post_ids %}
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+    <p>Aucune publication pour le moment.</p>
+</div>
+{% endif %}
+{% endblock %}

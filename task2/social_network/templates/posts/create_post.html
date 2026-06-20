@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %}Nouvelle publication — SocialNet{% endblock %}
+
+{% block content %}
+<div class="form-card">
+    <h1>Créer une publication</h1>
+
+    <form method="post" enctype="multipart/form-data" class="form">
+        {% csrf_token %}
+        {% for field in form %}
+        <div class="form-group">
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+            {% if field.errors %}
+            <span class="error">{{ field.errors.0 }}</span>
+            {% endif %}
+        </div>
+        {% endfor %}
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Publier</button>
+            <a href="{% url 'feed' %}" class="btn btn-secondary">Annuler</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

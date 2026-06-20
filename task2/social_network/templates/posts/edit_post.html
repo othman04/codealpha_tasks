@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block title %}Modifier la publication — SocialNet{% endblock %}
+
+{% block content %}
+<div class="form-card">
+    <h1>Modifier la publication</h1>
+
+    <form method="post" enctype="multipart/form-data" class="form">
+        {% csrf_token %}
+        {% for field in form %}
+        <div class="form-group">
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+            {% if field.errors %}
+            <span class="error">{{ field.errors.0 }}</span>
+            {% endif %}
+        </div>
+        {% endfor %}
+        {% if post.image %}
+        <div class="form-group">
+            <label>Image actuelle</label>
+            <img src="{{ post.image.url }}" alt="" class="preview-image">
+        </div>
+        {% endif %}
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Enregistrer</button>
+            <a href="{% url 'post_detail' pk=post.id %}" class="btn btn-secondary">Annuler</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

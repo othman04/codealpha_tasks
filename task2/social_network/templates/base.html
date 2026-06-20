@@ -1,0 +1,47 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}SocialNet{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="{% url 'feed' %}" class="nav-brand">SocialNet</a>
+            {% if user.is_authenticated %}
+            <div class="nav-links">
+                <a href="{% url 'feed' %}">Fil d'actualité</a>
+                <a href="{% url 'create_post' %}">Nouvelle publication</a>
+                <a href="{% url 'profile' username=user.username %}">Mon profil</a>
+                <a href="{% url 'edit_profile' %}">Modifier profil</a>
+                <a href="{% url 'logout' %}" class="btn-logout">Déconnexion</a>
+            </div>
+            {% else %}
+            <div class="nav-links">
+                <a href="{% url 'login' %}">Connexion</a>
+                <a href="{% url 'register' %}" class="btn-primary">Inscription</a>
+            </div>
+            {% endif %}
+        </div>
+    </nav>
+
+    <main class="container">
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2026 SocialNet — Réseau social minimal</p>
+    </footer>
+</body>
+</html>

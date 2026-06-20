@@ -1,0 +1,37 @@
+<div class="post-card">
+    <div class="post-header">
+        <a href="{% url 'profile' username=post.author.username %}" class="post-author">
+            {% if post.author.profile.photo %}
+            <img src="{{ post.author.profile.photo.url }}" alt="" class="avatar-sm">
+            {% else %}
+            <div class="avatar-sm avatar-placeholder">{{ post.author.username|first|upper }}</div>
+            {% endif %}
+            <span class="author-name">{{ post.author.username }}</span>
+        </a>
+        <span class="post-date">{{ post.created_at|date:"d M Y, H:i" }}</span>
+    </div>
+
+    <div class="post-content">
+        <p>{{ post.content|linebreaksbr }}</p>
+        {% if post.image %}
+        <img src="{{ post.image.url }}" alt="Image de la publication" class="post-image">
+        {% endif %}
+    </div>
+
+    <div class="post-actions">
+        <form method="post" action="{% url 'toggle_like' post_id=post.id %}" class="inline-form">
+            {% csrf_token %}
+            <button type="submit" class="action-btn {% if post.id in liked_post_ids %}liked{% endif %}">
+                {% if post.id in liked_post_ids %}&#10084;{% else %}&#9825;{% endif %}
+                {{ post.like_count }}
+            </button>
+        </form>
+        <a href="{% url 'post_detail' pk=post.id %}" class="action-btn">
+            &#128172; {{ post.comment_count }}
+        </a>
+        {% if user == post.author %}
+        <a href="{% url 'edit_post' pk=post.id %}" class="action-btn">&#9998; Modifier</a>
+        <a href="{% url 'delete_post' pk=post.id %}" class="action-btn danger">&#128465; Supprimer</a>
+        {% endif %}
+    </div>
+</div>

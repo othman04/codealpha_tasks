@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %}Fil d'actualité — SocialNet{% endblock %}
+
+{% block content %}
+<div class="feed-header">
+    <h1>Fil d'actualité</h1>
+    <a href="{% url 'create_post' %}" class="btn btn-primary">+ Nouvelle publication</a>
+</div>
+
+{% if posts %}
+<div class="posts-list">
+    {% for post in posts %}
+    {% include 'posts/post_card.html' with post=post liked_post_ids=liked_post_ids %}
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+    <h2>Votre fil est vide</h2>
+    <p>Suivez d'autres utilisateurs ou créez votre première publication !</p>
+    <a href="{% url 'create_post' %}" class="btn btn-primary">Créer une publication</a>
+</div>
+{% endif %}
+{% endblock %}
